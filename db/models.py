@@ -1,6 +1,7 @@
 from db.database import Base
-from sqlalchemy import Column, Integer, String, ForeignKey, TIMESTAMP
+from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship
+from sqlalchemy import TIMESTAMP
 
 
 class Passenger(Base):
@@ -37,9 +38,10 @@ class Reservation(Base):
     passenger_id = Column(Integer, ForeignKey('passengers.id'))
     created_at = Column(TIMESTAMP)
     updated_at = Column(TIMESTAMP)
+    reserved_seats = Column(Integer)
     status = Column(String)
 
     # Define the relationships
-    relationship("Flight", back_populates="reservations")
-    relationship("Passenger", back_populates="reservations")
+    flight = relationship("Flight", back_populates="reservations")
+    passenger=  relationship("Passenger", back_populates="reservations")
 
