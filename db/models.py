@@ -2,6 +2,39 @@ from db.database import Base
 from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship
 from sqlalchemy import TIMESTAMP
+from sqlalchemy import DateTime, func
+
+
+class City(Base):
+    __tablename__ = 'cities'
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, index=True, unique=True)
+    country = Column(String)
+
+    # Define the relationships
+    origin_flights = relationship("Flight", back_populates="origin_city", foreign_keys="Flight.origin_id")
+    destination_flights = relationship("Flight", back_populates="destination_city", foreign_keys="Flight.destination_id")
+
+
+class Flight(Base):
+    __tablename__ = 'flights'
+
+    id = Column(Integer, primary_key=True, index=True)
+    origin_id = Column(Integer , ForeignKey('cities.id'))
+    destination_id = Column(Integer , ForeignKey('cities.id'))
+    deaperature_date = Column(TIMESTAMP)
+    capacity = Column(Integer)
+    available_seats = Column(Integer)
+    
+    # Define the relationships
+    origin_city = relationship("City", back_populates="origin_flights", foreign_keys=[origin_id])
+    destination_city = relationship("City", back_populates="destination_flights", foreign_keys=[destination_id])
+    reservations = relationship("Reservation", back_populates="flight")
+
+
+
+
 
 
 class Passenger(Base):
@@ -16,18 +49,7 @@ class Passenger(Base):
     # Define the relationships
     reservations = relationship("Reservation", back_populates="passenger") 
 
-# Define the Flight model
-class Flight(Base):
-    __tablename__ = 'flights'
 
-    id = Column(Integer, primary_key=True, index=True)
-    origin = Column(String)
-    destination = Column(String)
-    deaperature_date = Column(TIMESTAMP)
-    capacity = Column(Integer)
-    
-    # Define the relationships
-    reservations = relationship("Reservation", back_populates="flight")
 
 # Define the Reservation model
 class Reservation(Base):

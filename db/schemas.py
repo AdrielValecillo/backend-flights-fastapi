@@ -3,27 +3,25 @@ from datetime import datetime, date
 
 # Define Pydantic model for Flight
 class FlightBase(BaseModel):
-    origin: str
-    destination: str
+    origin_id: int
+    destination_id: int
     deaperature_date: date
     capacity: int
 
-# Pydantic model for Flight creation
 class FlightCreate(FlightBase):
     pass
 
-# Pydantic model for Flight update
 class FlightUpdate(FlightBase):
     pass
 
-# Pydantic model for Flight response
 class FlightResponse(FlightBase):
     id: int
     
     class Config:
         orm_mode = True
-        
-        
+
+
+# Define Pydantic model for Passenger
 class PassengerBase(BaseModel):
     name: str
     last_name: str
@@ -41,23 +39,39 @@ class PassengerResponse(PassengerBase):
     
     class Config:
         orm_mode = True
-        
-        
-        
+
+
+# Define Pydantic model for Reservation
 class ReservationBase(BaseModel):
     flight_id: int
     passenger_id: int
-    created_at: date
     reserved_seats: int
-    status: str
 
 class ReservationCreate(ReservationBase):
-    created_at: date
+    pass
 
 class ReservationUpdate(ReservationBase):
     updated_at: date
 
 class ReservationResponse(ReservationBase):
+    id: int
+    
+    class Config:
+        orm_mode = True
+
+
+# Define Pydantic model for City
+class CityBase(BaseModel):
+    name: str
+    country: str
+    
+class CityCreate(CityBase):
+    pass
+
+class CityUpdate(CityBase):
+    pass
+
+class CityResponse(CityBase):
     id: int
     
     class Config:
