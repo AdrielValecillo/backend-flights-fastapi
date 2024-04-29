@@ -1,0 +1,46 @@
+project_name/
+│
+├── app/
+│   ├── _init_.py
+│   ├── api/
+│   │   ├── _init_.py
+        --- schemas/
+            --- user_schemas.py
+│   │   ├── endpoints/
+│   │   │   ├── _init_.py
+│   │   │   ├── user.py       # Módulo de endpoints para la gestión de usuarios
+│   │   │   ├── item.py       # Módulo de endpoints para la gestión de ítems
+│   │   │   └── ...
+│   │   └── dependencies.py   # Archivo para declarar dependencias comunes
+│   │
+│   ├── core/
+│   │   ├── _init_.py
+│   │   ├── config.py          # Configuración del proyecto
+│   │   └── security.py        # Funciones de seguridad y autenticación
+│   │
+│   ├── db/
+│   │   ├── _init_.py
+│   │   ├── base.py            # Configuración de la base de datos
+│   │   ├── user_models.py     # Definiciones de modelos relacionados con usuarios
+│   │   ├── item_models.py     # Definiciones de modelos relacionados con ítems
+│   │   └── ...
+│   │
+│   ├── services/
+│   │   ├── _init_.py
+│   │   ├── user_service.py    # Lógica de negocio relacionada con los usuarios
+│   │   ├── item_service.py    # Lógica de negocio relacionada con los ítems
+│   │   └── ...
+│   │
+│   └── main.py                # Punto de entrada principal de la aplicación FastAPI
+│
+├── migrations/                 # Directorio para las migraciones de la base de datos (si se usa Alembic)
+│
+├── tests/                      # Directorio para los tests
+│   ├── _init_.py
+│   ├── test_user.py           # Tests para el manejo de usuarios
+│   ├── test_item.py           # Tests para el manejo de ítems
+│   └── ...
+│
+├── requirements.txt            # Archivo para listar las dependencias del proyecto
+├── README.md                   # Documentación del proyecto
+└── .gitignore                  # Archivo para especificar los archivos y directorios a ignorar en Git

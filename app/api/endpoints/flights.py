@@ -1,8 +1,8 @@
 from fastapi import APIRouter
 from fastapi import FastAPI
-from db.database import SessionLocal
-import db.schemas as schemas
-import db.crud as crud
+from app.db.database import SessionLocal
+import app.db.schemas as schemas
+import app.db.crud as crud
 
 
 
