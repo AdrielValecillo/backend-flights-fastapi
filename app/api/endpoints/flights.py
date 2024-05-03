@@ -1,9 +1,11 @@
+from datetime import datetime
 from fastapi import APIRouter
 from fastapi import FastAPI
+from fastapi import HTTPException
 from app.db.database import SessionLocal
-import app.db.schemas as schemas
-import app.db.crud as crud
-
+import app.api.schemas.schemas_flights as schemas
+#import app.db.crud as crud
+import app.services.flights_services as service
 
 
 
@@ -12,24 +14,54 @@ app = FastAPI()
 flight_router = APIRouter()
 
 
-@flight_router.post("/flights/" , tags=["flights"])
+
+@flight_router.post("/api/flights" , tags=["flights"])
 def create_flight(flight: schemas.FlightCreate):
-    db = SessionLocal()
-    flight_create = crud.create_flight(db, flight)
-    return flight_create
+    try:
+        flight = service.create_flight(flight)
+        return {"status": True, "data": flight, "message": "Flight created successfully", "code": 201}
+    except HTTPException as e:
+        return {"status": False, "data": None, "message": e.detail, "code": e.status_code}
+    except Exception as e:
+        return {"status": False, "data": None, "message": str(e), "code": 500}
 
-@flight_router.get("/flight/{flight_id}" , tags=["flights"])
+@flight_router.get("/api/flights/{flight_id}" , tags=["flights"])
 def get_flight(flight_id: int):
-    db = SessionLocal()
-    flight = crud.get_flight(db, flight_id)
-    return flight
+    try:
+        flight = service.get_flight(flight_id)
+        return {"status": True, "data": flight, "message": "Flight created successfully", "code": 201}
+    except HTTPException as e:
+        return {"status": False, "data": None, "message": e.detail, "code": e.status_code}
+    except Exception as e:
+        return {"status": False, "data": None, "message": str(e), "code": 500}
 
-@flight_router.get("/info_flight/{flight_id}" , tags=["flights"])
-def get_info(flight_id: int):
-    db = SessionLocal()
-    info = crud.get_flight(db, flight_id)
-    city_origin_id = info.origin_id
-    city_destination_id = info.destination_id
-    city_origin = crud.get_city(db, city_origin_id)
-    city_destination = crud.get_city(db, city_destination_id)
-    return info, city_origin, city_destination
+
+@flight_router.get("/api/flights/" , tags=["flights"])
+def get_flights(skip: int = 0, limit: int = 100):
+    try:
+        flights = service.get_flights( skip, limit)
+        return {"status": True, "data": flights, "message": "Flights retrieved successfully", "code": 200}
+    except HTTPException as e:
+        return {"status": False, "data": None, "message": e.detail, "code": e.status_code}
+    except Exception as e:
+        return {"status": False, "data": None, "message": str(e), "code": 500}
+
+@flight_router.put("/api/flights/{flight_id}" , tags=["flights"])
+def update_flight(flight_id: int, flight_capacity: int):
+    try:
+        flight = service.update_flight( flight_id, flight_capacity)
+        return {"status": True, "data": flight, "message": "Flight updated successfully", "code": 200}
+    except HTTPException as e:
+        return {"status": False, "data": None, "message": e.detail, "code": e.status_code}
+    except Exception as e:
+        return {"status": False, "data": None, "message": str(e), "code": 500}
+
+@flight_router.delete("/api/flights/{flight_id}" , tags=["flights"])
+def delete_flight(flight_id: int):
+    try:
+        flight = service.delete_flight( flight_id)
+        return {"status": True, "data": flight, "message": "Flight deleted successfully", "code": 200}
+    except HTTPException as e:
+        return {"status": False, "data": None, "message": e.detail, "code": e.status_code}
+    except Exception as e:
+        return {"status": False, "data": None, "message": str(e), "code": 500}

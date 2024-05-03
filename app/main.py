@@ -17,11 +17,11 @@ db_models.Base.metadata.create_all(bind=engine)
 async def root():
     return {"message": "Hello World"}
 
-
+app.include_router(city_router)
 app.include_router(flight_router)
 app.include_router(passenger_router)
 app.include_router(reservation_router)
-app.include_router(city_router)
+
 
 
 

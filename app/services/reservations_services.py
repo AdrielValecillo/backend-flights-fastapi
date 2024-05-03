@@ -1,50 +1,12 @@
 from sqlalchemy.orm import Session, joinedload
 from app.db.models import Flight, Passenger, Reservation, City
-import app.api.schemas.schemas as schemas
+import app.api.schemas.schemas_reservations as schemas
 from fastapi import HTTPException
 from datetime import datetime
 from sqlalchemy.orm import joinedload
 from fastapi import HTTPException
-
-def create_city(db: Session, city: schemas.CityCreate):
-    db_city = City(**city.dict())
-    db.add(db_city)
-    db.commit()
-    db.refresh(db_city)
-    return db_city
-
-def get_city(db: Session, city_id: int):
-    db_city = db.query(City).filter(City.id == city_id).first()
-    if db_city is None:
-        raise HTTPException(status_code=404, detail="City not found")
-    return db_city
-
-def create_flight(db: Session, flight: schemas.FlightCreate):
-    db_flight = Flight(**flight.dict())
-    db_flight.available_seats = flight.capacity
-    db.add(db_flight)
-    db.commit()
-    db.refresh(db_flight)
-    return db_flight
-
-def get_flight(db: Session, flight_id: int):
-    db_flight = db.query(Flight).filter(Flight.id == flight_id).first()
-    if db_flight is None:
-        raise HTTPException(status_code=404, detail="Flight not found")
-    return db_flight
-
-def create_passenger(db: Session, passenger: schemas.PassengerCreate):
-    db_passenger = Passenger(**passenger.dict())
-    db.add(db_passenger)
-    db.commit()
-    db.refresh(db_passenger)
-    return db_passenger
-
-def get_passenger(db: Session, passenger_id: int):
-    db_passenger = db.query(Passenger).filter(Passenger.id == passenger_id).first()
-    if db_passenger is None:
-        raise HTTPException(status_code=404, detail="Passenger not found")
-    return db_passenger
+from app.services.flights_services import get_flight
+from app.services.passengers_services import get_passenger
 
 
 
@@ -70,6 +32,8 @@ def create_reservation(db: Session, reservation: schemas.ReservationCreate):
 
     db_flight.available_seats -= db_reservation.reserved_seats
     db.commit()
+    db.refresh(db_flight)
+    db.refresh(db_reservation)
     return db_reservation
 
 
