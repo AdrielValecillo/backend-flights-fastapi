@@ -7,13 +7,18 @@ from fastapi import HTTPException
 from datetime import datetime
 from sqlalchemy.orm import joinedload
 from fastapi import HTTPException
-
+from app.services.cities_services import get_city
 
 
 def create_flight(flight: schemas.FlightCreate):
     db = SessionLocal()
+    get_city(flight.origin_id)
+    get_city(flight.destination_id)
     if flight.capacity <= 0:
         raise HTTPException(status_code=400, detail="Invalid number of seats")
+    if flight.origin_id == flight.destination_id:
+        raise HTTPException(status_code=400, detail="Origin and destination cities are the same")
+    
     db_flight = Flight(**flight.dict())
     db_flight.available_seats = flight.capacity
     db.add(db_flight)
