@@ -23,6 +23,5 @@ Este proyecto es un backend para gestionar vuelos y reservas. Utiliza FastAPI pa
     uvicorn app.main:app --reload
     ```
 
-## Sugerencias para mejorar el README:
 
 
