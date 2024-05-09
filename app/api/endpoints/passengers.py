@@ -1,11 +1,9 @@
-
 from fastapi import APIRouter, HTTPException
-from app.db.database import SessionLocal
 import app.api.schemas.schemas_passengers as schemas
-#import app.db.crud as crud
-import app.services.passengers_services as crud
+from app.services.passengers_services import PassengersService
 
 passenger_router = APIRouter()
+crud = PassengersService()
 
 @passenger_router.post("/api/passengers" , tags=["passengers"])
 def create_passenger(passenger: schemas.PassengerCreate):
@@ -28,7 +26,7 @@ def get_passenger(passenger_id: int):
         return {"status": False, "data": None, "message": str(e), "code": 500}
 
 
-@passenger_router.get("/api/passengers/" , tags=["passengers"])
+@passenger_router.get("/api/passengers" , tags=["passengers"])
 def get_passengers(skip: int = 0, limit: int = 100):
     try:
         passengers = crud.get_passengers( skip, limit)

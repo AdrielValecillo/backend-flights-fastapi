@@ -1,12 +1,10 @@
 from fastapi import HTTPException
 from fastapi import APIRouter
-from app.db.database import SessionLocal
 import app.api.schemas.schemas_cities as schemas
-#import app.db.crud as crud
-import app.services.cities_services as crud
-
+from app.services.cities_services import CitiesService
 
 city_router = APIRouter()
+crud = CitiesService()
 
 @city_router.post("/api/cities" , tags=["cities"])
 def create_city(city: schemas.CityCreate):
@@ -30,7 +28,7 @@ def get_city(city_id: int):
         return {"status": False, "data": None, "message": str(e), "code": 500}
 
 
-@city_router.get("/api/cities/" , tags=["cities"])
+@city_router.get("/api/cities" , tags=["cities"])
 def get_cities(skip: int = 0, limit: int = 100):
     try:
         cities = crud.get_cities( skip, limit)

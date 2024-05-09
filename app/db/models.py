@@ -1,8 +1,7 @@
 from app.db.database import Base
-from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy import Column, Integer, String, ForeignKey, TIMESTAMP
 from sqlalchemy.orm import relationship
-from sqlalchemy import TIMESTAMP
-from sqlalchemy import DateTime, func
+
 
 
 class City(Base):
@@ -23,9 +22,10 @@ class Flight(Base):
     id = Column(Integer, primary_key=True, index=True)
     origin_id = Column(Integer , ForeignKey('cities.id'))
     destination_id = Column(Integer , ForeignKey('cities.id'))
-    deaperature_date = Column(TIMESTAMP)
+    departure_date = Column(TIMESTAMP)
     capacity = Column(Integer)
     available_seats = Column(Integer)
+    status = Column(String)
     
     # Define the relationships
     origin_city = relationship("City", back_populates="origin_flights", foreign_keys=[origin_id])

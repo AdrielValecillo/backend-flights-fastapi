@@ -1,19 +1,10 @@
-from datetime import datetime
-from fastapi import APIRouter
-from fastapi import FastAPI
-from fastapi import HTTPException
-from app.db.database import SessionLocal
+from fastapi import APIRouter, HTTPException
 import app.api.schemas.schemas_flights as schemas
-#import app.db.crud as crud
-import app.services.flights_services as service
-
-
-
-app = FastAPI()
+from app.services.flights_services import FlightsService
+from typing import Optional
 
 flight_router = APIRouter()
-
-
+service = FlightsService()
 
 @flight_router.post("/api/flights" , tags=["flights"])
 def create_flight(flight: schemas.FlightCreate):
@@ -36,10 +27,10 @@ def get_flight(flight_id: int):
         return {"status": False, "data": None, "message": str(e), "code": 500}
 
 
-@flight_router.get("/api/flights/" , tags=["flights"])
-def get_flights(skip: int = 0, limit: int = 100):
+@flight_router.get("/api/flights" , tags=["flights"])
+def get_flights(origin: Optional[int] = None):
     try:
-        flights = service.get_flights( skip, limit)
+        flights = service.get_flights(origin)
         return {"status": True, "data": flights, "message": "Flights retrieved successfully", "code": 200}
     except HTTPException as e:
         return {"status": False, "data": None, "message": e.detail, "code": e.status_code}

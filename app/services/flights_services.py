@@ -1,62 +1,62 @@
-
+from typing import Optional
 from app.db.database import SessionLocal
-from sqlalchemy.orm import Session, joinedload
-from app.db.models import Flight, Passenger, Reservation, City
+from sqlalchemy.orm import joinedload
+from app.db.models import Flight
 import app.api.schemas.schemas_flights as schemas
 from fastapi import HTTPException
-from datetime import datetime
 from sqlalchemy.orm import joinedload
-from fastapi import HTTPException
-from app.services.cities_services import get_city
+from app.services.cities_services import CitiesService
+
+get_city = CitiesService().get_city
 
 
-def create_flight(flight: schemas.FlightCreate):
-    db = SessionLocal()
-    get_city(flight.origin_id)
-    get_city(flight.destination_id)
-    if flight.capacity <= 0:
-        raise HTTPException(status_code=400, detail="Invalid number of seats")
-    if flight.origin_id == flight.destination_id:
-        raise HTTPException(status_code=400, detail="Origin and destination cities are the same")
+class FlightsService:
+    def __init__(self):
+        self.db = SessionLocal()
     
-    db_flight = Flight(**flight.dict())
-    db_flight.available_seats = flight.capacity
-    db.add(db_flight)
-    db.commit()
-    db.refresh(db_flight)
-    return db_flight
 
-def get_flight(flight_id: int):
-    db = SessionLocal()
-    db_flight = db.query(Flight).options(joinedload(Flight.origin_city), joinedload(Flight.destination_city)).filter(Flight.id == flight_id).first()
-    if db_flight is None:
-        raise HTTPException(status_code=404, detail="Flight not found")
-    return db_flight
+    def create_flight(self, flight: schemas.FlightCreate):
+        get_city(flight.origin_id)
+        get_city(flight.destination_id)
+        if flight.origin_id == flight.destination_id:
+            raise HTTPException(status_code=400, detail="Origin and destination cannot be the same")
+        db_flight = Flight(**flight.dict())
+        db_flight.available_seats = flight.capacity
+        db_flight.status = "active"
+        self.db.add(db_flight)
+        self.db.commit()
+        self.db.refresh(db_flight)
+        return db_flight
 
-def get_flights( skip: int = 0, limit: int = 100):
-    db = SessionLocal()
-    flights = db.query(Flight).options(joinedload(Flight.origin_city), joinedload(Flight.destination_city)).offset(skip).limit(limit).all()
-    if flights is None:
-        raise HTTPException(status_code=404, detail="No flights found")
-    return flights
+    def get_flight(self, flight_id: int):
+        db_flight = self.db.query(Flight).options(joinedload(Flight.origin_city), joinedload(Flight.destination_city)).filter(Flight.id == flight_id).first()
+        if db_flight is None:
+            raise HTTPException(status_code=404, detail="Flight not found")
+        return db_flight
 
+    def get_flights(self, origin: Optional[int] = None):
+        if origin is not None:
+            flights_db = self.db.query(Flight).options(joinedload(Flight.origin_city), joinedload(Flight.destination_city)).filter((Flight.origin_id == origin) & (Flight.status == "active")).all()
+        else:
+            flights_db = self.db.query(Flight).options(joinedload(Flight.origin_city), joinedload(Flight.destination_city)).filter(Flight.status == "active").all()
+        if not flights_db:
+            raise HTTPException(status_code=404, detail="No flights found")
+        return flights_db
 
-def update_flight(flight_id: int, flight_capacity: int):
-    db = SessionLocal()
-    db_flight = db.query(Flight).filter(Flight.id == flight_id).first()
-    if db_flight is None:
-        raise HTTPException(status_code=404, detail="Flight not found")
-    db_flight.capacity = flight_capacity
-    db_flight.available_seats = flight_capacity
-    db.commit()
-    db.refresh(db_flight)
-    return db_flight
+    def update_flight(self, flight_id: int, flight_capacity: int):
+        db_flight = self.db.query(Flight).filter(Flight.id == flight_id).first()
+        if db_flight is None:
+            raise HTTPException(status_code=404, detail="Flight not found")
+        db_flight.capacity = flight_capacity
+        db_flight.available_seats = flight_capacity
+        self.db.commit()
+        self.db.refresh(db_flight)
+        return db_flight
 
-def delete_flight(flight_id: int):
-    db = SessionLocal()
-    db_flight = db.query(Flight).filter(Flight.id == flight_id).first()
-    if db_flight is None:
-        raise HTTPException(status_code=404, detail="Flight not found")
-    db.delete(db_flight)
-    db.commit()
-    return db_flight
+    def delete_flight(self, flight_id: int):
+        db_flight = self.db.query(Flight).filter(Flight.id == flight_id).first()
+        if db_flight is None:
+            raise HTTPException(status_code=404, detail="Flight not found")
+        self.db.delete(db_flight)
+        self.db.commit()
+        return db_flight

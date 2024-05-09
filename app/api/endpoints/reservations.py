@@ -1,8 +1,8 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 import app.api.schemas.schemas_reservations as schemas
-from fastapi import HTTPException
-#import app.db.crud as crud
-import app.services.reservations_services as crud
+from app.services.reservations_services import ReservationService
+
+crud = ReservationService()
 
 reservation_router = APIRouter()
 
@@ -18,7 +18,7 @@ def create_reservation(reservation: schemas.ReservationCreate):
     except Exception as e:
         return {"status": False, "data": None, "message": str(e), "code": 500}
 
-@reservation_router.get("/api/reservations/all" , tags=["reservations"])
+@reservation_router.get("/api/reservations" , tags=["reservations"])
 def get_reservations():
     try:
         reservations = crud.get_reservations()
@@ -34,7 +34,7 @@ def get_reservations():
 @reservation_router.get("/api/reservations/{reservation_id}" , tags=["reservations"])
 def get_reservations(reservation_id: int):
     try:
-        info = crud.get_reservation_with_related_data( reservation_id )
+        info = crud.get_reservation( reservation_id )
         return {"status": True, "data": info, "message": "Reservations retrieved", "code": 200}
     except HTTPException as e:
         return {"status": False, "data": None, "message": e.detail, "code": e.status_code}
