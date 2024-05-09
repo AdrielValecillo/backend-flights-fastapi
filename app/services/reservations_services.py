@@ -18,8 +18,7 @@ class ReservationService():
         
         db_flight = get_flight( reservation.flight_id)
         get_passenger(reservation.passenger_id)
-        if reservation.reserved_seats <= 0:
-            raise HTTPException(status_code=400, detail="Invalid number of seats")
+
         if db_flight.available_seats < reservation.reserved_seats:
             raise HTTPException(status_code=400, detail="Not enough seats available")
 

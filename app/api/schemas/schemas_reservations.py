@@ -1,13 +1,13 @@
-from pydantic import BaseModel, EmailStr
-from datetime import datetime, date
+from pydantic import BaseModel, conint
+from datetime import date
 
 
 
 # Define Pydantic model for Reservation
 class ReservationBase(BaseModel):
-    flight_id: int
-    passenger_id: int
-    reserved_seats: int
+    flight_id: conint(ge=1)
+    passenger_id: conint(ge=1)
+    reserved_seats: conint(gt=0)
 
 class ReservationCreate(ReservationBase):
     pass
