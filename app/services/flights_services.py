@@ -4,8 +4,8 @@ from sqlalchemy.orm import joinedload
 from app.db.models import Flight
 import app.api.schemas.schemas_flights as schemas
 from fastapi import HTTPException
-from sqlalchemy.orm import joinedload
 from app.services.cities_services import CitiesService
+from sqlalchemy import or_
 
 get_city = CitiesService().get_city
 
@@ -34,14 +34,17 @@ class FlightsService:
             raise HTTPException(status_code=404, detail="Flight not found")
         return db_flight
 
-    def get_flights(self, origin: Optional[int] = None):
-        if origin is not None:
-            flights_db = self.db.query(Flight).options(joinedload(Flight.origin_city), joinedload(Flight.destination_city)).filter((Flight.origin_id == origin) & (Flight.status == "active")).all()
+
+
+    def get_flights(self, search: Optional[str] = None):
+        if search is not None:
+            flights = self.db.query(Flight).options(joinedload(Flight.origin_city), joinedload(Flight.destination_city)).filter(or_(Flight.origin_city.has(name=search), Flight.destination_city.has(name=search))).all()
         else:
-            flights_db = self.db.query(Flight).options(joinedload(Flight.origin_city), joinedload(Flight.destination_city)).filter(Flight.status == "active").all()
-        if not flights_db:
-            raise HTTPException(status_code=404, detail="No flights found")
-        return flights_db
+            flights = self.db.query(Flight).options(joinedload(Flight.origin_city), joinedload(Flight.destination_city)).all()
+            
+        if len(flights) == 0:
+            raise HTTPException(status_code=404, detail="Flights not found")
+        return flights
 
     def update_flight(self, flight_id: int, flight_capacity: int):
         db_flight = self.db.query(Flight).filter(Flight.id == flight_id).first()
