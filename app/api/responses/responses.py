@@ -4,6 +4,11 @@ class Responses:
     def __init__(self):
         pass
 
+    def response_message(self, data: dict, message: str, code: int):
+        return {"status": True, "data": data, "message": message, "code": code}
+    
+    
+
     def message_HTTPException(self, e: HTTPException):
         return {"status": False, "data": None, "message": e.detail, "code": e.status_code}
 

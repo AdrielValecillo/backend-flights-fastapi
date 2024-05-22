@@ -12,7 +12,7 @@ messages = Responses()
 def create_city(city: schemas.CityCreate):
     try:
         city_create = crud.create_city(city)
-        return {"status": True, "data": city_create, "message": "City created successfully", "code": 201}
+        return messages.response_message(city_create, "City created successfully", 201)
     except HTTPException as e:
         return messages.message_HTTPException(e)
     except Exception as e:
