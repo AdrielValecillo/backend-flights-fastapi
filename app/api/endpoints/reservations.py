@@ -11,7 +11,7 @@ messages = Responses()
 def create_reservation(reservation: schemas.ReservationCreate):
     try:
         reservation_create = crud.create_reservation( reservation)
-        return {"status": True, "data": reservation_create, "message": "Reservation Created sussefully", "code": 201}
+        return messages.response_message(reservation_create, "Reservation created", 201)
     except HTTPException as e:
         # todo: log error
         return messages.message_HTTPException(e)
@@ -22,7 +22,7 @@ def create_reservation(reservation: schemas.ReservationCreate):
 def get_reservations():
     try:
         reservations = crud.get_reservations()
-        return {"status": True, "data": reservations, "message": "Reservations retrieved", "code": 200}
+        return messages.response_message(reservations, "Reservations retrieved", 200)
     except HTTPException as e:
         return messages.message_HTTPException(e)
     except Exception as e:
@@ -35,7 +35,7 @@ def get_reservations():
 def get_reservation(reservation_id: int):
     try:
         info = crud.get_reservation( reservation_id )
-        return {"status": True, "data": info, "message": "Reservations retrieved", "code": 200}
+        return messages.response_message(info, "Reservation retrieved", 200)
     except HTTPException as e:
         return messages.message_HTTPException(e)
     except Exception as e:
@@ -46,7 +46,7 @@ def get_reservation(reservation_id: int):
 def cancel_reservation(reservation_id: int):
     try:
         crud.cancel_reservation( reservation_id)
-        return {"status": True, "data": None,"message": "Reservation cancelled", "code": 200}
+        return messages.response_message(None, "Reservation cancelled", 200)
     except HTTPException as e:
         return messages.message_HTTPException(e)
     except Exception as e:
@@ -57,7 +57,7 @@ def cancel_reservation(reservation_id: int):
 def update_reservation(reservation_id: int, new_seats: int):
     try:
         crud.update_reservation( reservation_id, new_seats)
-        return {"status": True, "data": None, "message": "Reservation updated", "code": 200}
+        return messages.response_message(None, "Reservation updated", 200)
     except HTTPException as e:
         return messages.message_HTTPException(e)
     except Exception as e:
@@ -68,7 +68,7 @@ def update_reservation(reservation_id: int, new_seats: int):
 def delete_reservation(reservation_id: int):
     try:
         crud.delete_reservation( reservation_id)
-        return {"status": True, "data": None, "message": "Reservation deleted", "code": 200}
+        return messages.response_message(None, "Reservation deleted", 200)
     except HTTPException as e:
         return messages.message_HTTPException(e)
     except Exception as e:

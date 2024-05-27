@@ -23,7 +23,7 @@ def create_city(city: schemas.CityCreate):
 def get_city(city_id: int):
     try:
         city = crud.get_city(city_id)
-        return {"status": True, "data": city, "message": "City retrieved successfully", "code": 200}
+        return messages.response_message(city, "City retrieved successfully", 200)
     except HTTPException as e:
         return messages.message_HTTPException(e)
     except Exception as e:
@@ -34,7 +34,7 @@ def get_city(city_id: int):
 def get_cities(skip: int = 0, limit: int = 100):
     try:
         cities = crud.get_cities( skip, limit)
-        return {"status": True, "data": cities, "message": "Cities retrieved successfully", "code": 200}
+        return messages.response_message(cities, "Cities retrieved successfully", 200)
     except HTTPException as e:
         return messages.message_HTTPException(e)
     except Exception as e:
@@ -45,7 +45,7 @@ def get_cities(skip: int = 0, limit: int = 100):
 def update_city(city_id: int, city: schemas.CityCreate):
     try:
         city_update = crud.update_city(city_id, city)
-        return {"status": True, "data": city_update, "message": "City updated successfully", "code": 200}
+        return messages.response_message(city_update, "City updated successfully", 200)
     except HTTPException as e:
         return messages.message_HTTPException(e)
     except Exception as e:
@@ -56,7 +56,7 @@ def update_city(city_id: int, city: schemas.CityCreate):
 def delete_city(city_id: int):
     try:
         city = crud.delete_city(city_id)
-        return {"status": True, "data": city, "message": "City deleted successfully", "code": 200}
+        return messages.response_message(city, "City deleted successfully", 200)
     except HTTPException as e:
         return messages.message_HTTPException(e)
     except Exception as e:

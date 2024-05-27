@@ -12,7 +12,7 @@ messages = Responses()
 def create_flight(flight: schemas.FlightCreate):
     try:
         flight = service.create_flight(flight)
-        return {"status": True, "data": flight, "message": "Flight created successfully", "code": 201}
+        return messages.response_message(flight, "Flight created successfully", 201)
     except HTTPException as e:
         return messages.message_HTTPException(e)
     except Exception as e:
@@ -22,7 +22,7 @@ def create_flight(flight: schemas.FlightCreate):
 def get_flight(flight_id: int):
     try:
         flight = service.get_flight(flight_id)
-        return {"status": True, "data": flight, "message": "Flight created successfully", "code": 201}
+        return messages.response_message(flight, "Flight retrieved successfully", 200)
     except HTTPException as e:
         return messages.message_HTTPException(e)
     except Exception as e:
@@ -33,7 +33,7 @@ def get_flight(flight_id: int):
 def get_flights(search: Optional[str] = None):
     try:
         flights = service.get_flights(search)
-        return {"status": True, "data": flights, "message": "Flights retrieved successfully", "code": 200}
+        return messages.response_message(flights, "Flights retrieved successfully", 200)
     except HTTPException as e:
         return messages.message_HTTPException(e)
     except Exception as e:
@@ -43,7 +43,7 @@ def get_flights(search: Optional[str] = None):
 def update_flight(flight_id: int, flight_capacity: int):
     try:
         flight = service.update_flight( flight_id, flight_capacity)
-        return {"status": True, "data": flight, "message": "Flight updated successfully", "code": 200}
+        return messages.response_message(flight, "Flight updated successfully", 200)
     except HTTPException as e:
         return messages.message_HTTPException(e)
     except Exception as e:
@@ -53,7 +53,7 @@ def update_flight(flight_id: int, flight_capacity: int):
 def delete_flight(flight_id: int):
     try:
         flight = service.delete_flight( flight_id)
-        return {"status": True, "data": flight, "message": "Flight deleted successfully", "code": 200}
+        return messages.response_message(flight, "Flight deleted successfully", 200)
     except HTTPException as e:
         return messages.message_HTTPException(e)
     except Exception as e:
