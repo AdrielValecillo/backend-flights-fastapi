@@ -1,6 +1,5 @@
 from typing import Optional
-
-from app.db.database import SessionLocal
+from app.services.base import Base
 from sqlalchemy.orm import joinedload
 from app.db.models import Flight
 import app.api.schemas.schemas_flights as schemas
@@ -11,9 +10,8 @@ from sqlalchemy import or_
 get_city = CitiesService().get_city
 
 
-class FlightsService():
-    def __init__(self):
-        self.db = SessionLocal()
+class FlightsService(Base):
+
 
     def create_flight(self, flight: schemas.FlightCreate):
         get_city(flight.origin_id)

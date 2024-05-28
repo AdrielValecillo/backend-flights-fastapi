@@ -10,10 +10,9 @@ messages = Responses()
 @reservation_router.post("/api/reservations" , tags=["reservations"])
 def create_reservation(reservation: schemas.ReservationCreate):
     try:
-        reservation_create = crud.create_reservation( reservation)
+        reservation_create = crud.create_reservation(reservation)
         return messages.response_message(reservation_create, "Reservation created", 201)
     except HTTPException as e:
-        # todo: log error
         return messages.message_HTTPException(e)
     except Exception as e:
         return messages.message_exception(e)

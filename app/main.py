@@ -1,7 +1,6 @@
 from fastapi import FastAPI
-from app.db.database import engine, Base
+from app.db.database import engine
 import app.db.models as db_models
-
 from app.api.endpoints.flights import flight_router
 from app.api.endpoints.passengers import passenger_router
 from app.api.endpoints.reservations import reservation_router

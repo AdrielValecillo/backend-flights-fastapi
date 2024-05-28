@@ -1,5 +1,5 @@
 
-from app.db.database import SessionLocal
+from app.services.base import Base
 from sqlalchemy.orm import joinedload
 from sqlalchemy.orm.session import make_transient
 from app.db.models import Flight, Reservation
@@ -12,31 +12,22 @@ from app.services.passengers_services import PassengersService
 get_flight = FlightsService().get_flight
 get_passenger = PassengersService().get_passenger
 
-class ReservationService():
-    def __init__(self):
-        self.db = SessionLocal()
-    
+class ReservationService(Base):
+
     def create_reservation(self, reservation: schemas.ReservationCreate):
-        
-        db_flight = get_flight( reservation.flight_id)
+        db_flight = self.db.query(Flight).get(reservation.flight_id)
         get_passenger(reservation.passenger_id)
-        
-        make_transient(db_flight)
 
         if db_flight.available_seats < reservation.reserved_seats:
             raise HTTPException(status_code=400, detail="Not enough seats available")
 
         db_reservation = Reservation(**reservation.dict())
-        db_flight = get_flight(db_reservation.flight_id)
-        db_reservation.is_active = True
         db_reservation.created_at = datetime.now()
         self.db.add(db_reservation)
-        self.db.commit()
-        self.db.refresh(db_reservation)
 
-        db_flight.available_seats -= db_reservation.reserved_seats
-        self.db.add(db_flight)
+        db_flight.available_seats -= reservation.reserved_seats
         self.db.commit()
+
         self.db.refresh(db_flight)
         self.db.refresh(db_reservation)
         return db_reservation
