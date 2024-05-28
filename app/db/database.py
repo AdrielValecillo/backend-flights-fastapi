@@ -1,17 +1,18 @@
+import os
+from dotenv import load_dotenv
 from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
-import json
+from sqlalchemy.ext.declarative import declarative_base
 
-with open('app/secret.json') as f:
-    env_vars = json.load(f)
+
+load_dotenv("./.env")
 
 # Replace the placeholders with your PostgreSQL connection details
-db_user = env_vars['DB_USER']
-db_password = env_vars['DB_PASSWORD']
-db_host = env_vars['DB_HOST']
-db_port = env_vars['DB_PORT']
-db_name = env_vars['DB_NAME']
+db_user = os.getenv('DB_USER')
+db_password = os.getenv('DB_PASSWORD')
+db_host = os.getenv('DB_HOST')
+db_port = os.getenv('DB_PORT')
+db_name = os.getenv('DB_NAME')
 
 # Create the connection string
 db_url = f'postgresql://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}'

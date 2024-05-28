@@ -1,12 +1,10 @@
-from app.db.database import SessionLocal
 from app.db.models import City
 import app.api.schemas.schemas_cities as schemas
 from fastapi import HTTPException
+from app.services.base import Base
 
 
-class CitiesService:
-    def __init__(self):
-        self.db = SessionLocal()
+class CitiesService(Base):
 
     def create_city(self, city: schemas.CityCreate):
         db_city = City(**city.dict())
@@ -26,7 +24,7 @@ class CitiesService:
         return db_city
 
     def get_cities(self, skip: int = 0, limit: int = 100):
-        cities = self.db.query(City).offset(skip).limit(limit).all()
+        cities = self.db.query(City).all()
         if cities is None:
             raise HTTPException(status_code=404, detail="No cities found")
         return cities

@@ -30,9 +30,9 @@ def get_passenger(passenger_id: int):
 
 
 @passenger_router.get("/api/passengers" , tags=["passengers"])
-def get_passengers(skip: int = 0, limit: int = 100):
+def get_passengers():
     try:
-        passengers = crud.get_passengers( skip, limit)
+        passengers = crud.get_passengers()
         return messages.response_message(passengers, "Passengers retrieved successfully", 200)
     except HTTPException as e:
         return messages.message_HTTPException(e)

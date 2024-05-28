@@ -1,5 +1,4 @@
-from fastapi import HTTPException
-from fastapi import APIRouter
+from fastapi import HTTPException, APIRouter
 import app.api.schemas.schemas_cities as schemas
 from app.services.cities_services import CitiesService
 from app.api.responses.responses import Responses
@@ -31,9 +30,9 @@ def get_city(city_id: int):
 
 
 @city_router.get("/api/cities" , tags=["cities"])
-def get_cities(skip: int = 0, limit: int = 100):
+def get_cities():
     try:
-        cities = crud.get_cities( skip, limit)
+        cities = crud.get_cities()
         return messages.response_message(cities, "Cities retrieved successfully", 200)
     except HTTPException as e:
         return messages.message_HTTPException(e)

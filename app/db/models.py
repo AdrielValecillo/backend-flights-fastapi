@@ -1,5 +1,5 @@
 from app.db.database import Base
-from sqlalchemy import Column, Integer, String, ForeignKey, TIMESTAMP
+from sqlalchemy import Column, Integer, String, ForeignKey, TIMESTAMP, Boolean
 from sqlalchemy.orm import relationship
 
 
@@ -16,6 +16,8 @@ class City(Base):
     destination_flights = relationship("Flight", back_populates="destination_city", foreign_keys="Flight.destination_id")
 
 
+
+
 class Flight(Base):
     __tablename__ = 'flights'
 
@@ -25,7 +27,7 @@ class Flight(Base):
     departure_date = Column(TIMESTAMP)
     capacity = Column(Integer)
     available_seats = Column(Integer)
-    status = Column(String)
+    is_active = Column(Boolean, default=True)
     
     # Define the relationships
     origin_city = relationship("City", back_populates="origin_flights", foreign_keys=[origin_id])
@@ -61,7 +63,7 @@ class Reservation(Base):
     created_at = Column(TIMESTAMP)
     updated_at = Column(TIMESTAMP)
     reserved_seats = Column(Integer)
-    status = Column(String)
+    is_active = Column(Boolean, default=True)
 
     # Define the relationships
     flight = relationship("Flight", back_populates="reservations")

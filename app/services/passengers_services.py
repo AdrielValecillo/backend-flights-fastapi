@@ -1,12 +1,10 @@
-from app.db.database import SessionLocal
+from app.services.base import Base
 from app.db.models import Passenger
 import app.api.schemas.schemas_passengers as schemas
 from fastapi import HTTPException
 
 
-class PassengersService:
-    def __init__(self):
-        self.db = SessionLocal()
+class PassengersService(Base):
 
     def create_passenger(self, passenger: schemas.PassengerCreate):
         
@@ -28,7 +26,7 @@ class PassengersService:
         return db_passenger
 
     def get_passengers(self, skip: int = 0, limit: int = 100):
-        passengers = self.db.query(Passenger).offset(skip).limit(limit).all()
+        passengers = self.db.query(Passenger).all()
         if passengers is None:
             raise HTTPException(status_code=404, detail="No passengers found")
         return passengers

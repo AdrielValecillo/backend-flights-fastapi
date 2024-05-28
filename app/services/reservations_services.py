@@ -1,5 +1,7 @@
+
 from app.db.database import SessionLocal
 from sqlalchemy.orm import joinedload
+from sqlalchemy.orm.session import make_transient
 from app.db.models import Flight, Reservation
 import app.api.schemas.schemas_reservations as schemas
 from fastapi import HTTPException
@@ -13,18 +15,20 @@ get_passenger = PassengersService().get_passenger
 class ReservationService():
     def __init__(self):
         self.db = SessionLocal()
-
+    
     def create_reservation(self, reservation: schemas.ReservationCreate):
         
         db_flight = get_flight( reservation.flight_id)
         get_passenger(reservation.passenger_id)
+        
+        make_transient(db_flight)
 
         if db_flight.available_seats < reservation.reserved_seats:
             raise HTTPException(status_code=400, detail="Not enough seats available")
 
         db_reservation = Reservation(**reservation.dict())
         db_flight = get_flight(db_reservation.flight_id)
-        db_reservation.status = "active"
+        db_reservation.is_active = True
         db_reservation.created_at = datetime.now()
         self.db.add(db_reservation)
         self.db.commit()
@@ -39,7 +43,6 @@ class ReservationService():
 
 
     def get_reservation(self, reservation_id: int):
-
         reservation = self.db.query(Reservation).options(
             joinedload(Reservation.passenger),
             joinedload(Reservation.flight).joinedload(Flight.origin_city),
@@ -49,13 +52,13 @@ class ReservationService():
             raise HTTPException(status_code=404, detail="Reservation not found")
         return reservation
 
-    def get_reservations(self):
 
+    def get_reservations(self):
         reservations = self.db.query(Reservation).options(
             joinedload(Reservation.passenger),
             joinedload(Reservation.flight).joinedload(Flight.origin_city),
             joinedload(Reservation.flight).joinedload(Flight.destination_city)
-        ).filter(Reservation.status != "cancelled").all()
+        ).filter(Reservation.is_active != False).all()
         if not reservations:
             raise HTTPException(status_code=404, detail="Reservations not found")
         return reservations
@@ -87,7 +90,7 @@ class ReservationService():
         db_reservation = self.db.query(Reservation).filter(Reservation.id == reservation_id).first()
         if not db_reservation:
             raise HTTPException(status_code=404, detail="Reservation not found")
-        if db_reservation.status == "cancelled":
+        if db_reservation.is_active == False:
             raise HTTPException(status_code=400, detail="Cannot update a cancelled reservation")
 
         # Obtener el vuelo asociado a la reserva
@@ -111,7 +114,7 @@ class ReservationService():
         db_reservation = self.db.query(Reservation).filter(Reservation.id == reservation_id).first()
         if db_reservation is None:
             raise HTTPException(status_code=404, detail="Reservation not found")
-        if db_reservation.status == "cancelled":
+        if db_reservation.status == False:
             raise HTTPException(status_code=400, detail="Reservation already cancelled")
         
         db_flight = get_flight( db_reservation.flight_id)
@@ -121,7 +124,7 @@ class ReservationService():
         self.db.commit()
 
         # Cancelar la reserva
-        db_reservation.status = "cancelled"
+        db_reservation.is_active = False
         self.db.commit()
         self.db.refresh(db_reservation)
         return db_reservation
