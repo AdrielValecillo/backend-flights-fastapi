@@ -1,7 +1,9 @@
+from typing import Optional
 from app.db.models import City
 import app.api.schemas.schemas_cities as schemas
 from fastapi import HTTPException
 from app.services.base import Base
+from sqlalchemy import or_
 
 
 class CitiesService(Base):
@@ -23,11 +25,17 @@ class CitiesService(Base):
             raise HTTPException(status_code=404, detail="City not found")
         return db_city
 
-    def get_cities(self, skip: int = 0, limit: int = 100):
-        cities = self.db.query(City).all()
-        if cities is None:
+    def get_cities(self, search: Optional[str] = None):
+        if search is not None:
+            db_cities = self.db.query(City).filter(
+                or_(City.name.like(f"%{search}%"), City.country.like(f"%{search}%"))
+            ).all()
+        else:
+            db_cities = self.db.query(City).all()
+
+        if len(db_cities) == 0:
             raise HTTPException(status_code=404, detail="No cities found")
-        return cities
+        return db_cities
 
     def update_city(self, city_id: int, city: schemas.CityCreate):
         db_city = self.db.query(City).filter(City.id == city_id).first()

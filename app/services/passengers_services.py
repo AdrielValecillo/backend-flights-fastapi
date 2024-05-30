@@ -25,7 +25,7 @@ class PassengersService(Base):
             raise HTTPException(status_code=404, detail="Passenger not found")
         return db_passenger
 
-    def get_passengers(self, skip: int = 0, limit: int = 100):
+    def get_passengers(self):
         passengers = self.db.query(Passenger).all()
         if passengers is None:
             raise HTTPException(status_code=404, detail="No passengers found")

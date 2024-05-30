@@ -1,7 +1,7 @@
 from typing import Optional
 from app.services.base import Base
 from sqlalchemy.orm import joinedload
-from app.db.models import Flight
+from app.db.models import Flight, City
 import app.api.schemas.schemas_flights as schemas
 from fastapi import HTTPException
 from app.services.cities_services import CitiesService
@@ -41,7 +41,7 @@ class FlightsService(Base):
                 joinedload(Flight.origin_city), 
                 joinedload(Flight.destination_city)
             ).filter(Flight.is_active == True).filter(
-                or_(Flight.origin_city.has(name=search), Flight.destination_city.has(name=search))
+                or_(Flight.origin_city.has(City.name.like(f"%{search}%")), Flight.destination_city.has(City.name.like(f"%{search}%")))
             ).all()
         else:
             flights = self.db.query(Flight).options(
