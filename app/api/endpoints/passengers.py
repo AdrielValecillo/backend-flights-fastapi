@@ -1,4 +1,5 @@
 from fastapi import APIRouter, HTTPException
+from typing import Optional
 import app.api.schemas.schemas_passengers as schemas
 from app.services.passengers_services import PassengersService
 from app.api.responses.responses import Responses
@@ -30,9 +31,9 @@ def get_passenger(passenger_id: int):
 
 
 @passenger_router.get("/api/passengers" , tags=["passengers"])
-def get_passengers():
+def get_passengers(search: Optional[str] = None):
     try:
-        passengers = crud.get_passengers()
+        passengers = crud.get_passengers(search)
         return messages.response_message(passengers, "Passengers retrieved successfully", 200)
     except HTTPException as e:
         return messages.message_HTTPException(e)
