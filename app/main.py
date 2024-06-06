@@ -5,6 +5,7 @@ from app.api.endpoints.flights import flight_router
 from app.api.endpoints.passengers import passenger_router
 from app.api.endpoints.reservations import reservation_router
 from app.api.endpoints.cities import city_router
+from app.api.endpoints.login import Login_router
 
 
 app = FastAPI()
@@ -20,6 +21,7 @@ app.include_router(city_router)
 app.include_router(flight_router)
 app.include_router(passenger_router)
 app.include_router(reservation_router)
+app.include_router(Login_router)
 
 
 

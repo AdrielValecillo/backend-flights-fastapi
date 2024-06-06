@@ -1,3 +1,5 @@
 env/
 __pycache__/
 secret.json
+__pycache__*
+.env

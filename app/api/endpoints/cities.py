@@ -1,14 +1,15 @@
 from typing import Optional
-from fastapi import HTTPException, APIRouter
+from fastapi import HTTPException, APIRouter, Depends
 import app.api.schemas.schemas_cities as schemas
 from app.services.cities_services import CitiesService
 from app.api.responses.responses import Responses
+from app.api.endpoints.login import JWTBearer
 
 city_router = APIRouter()
 crud = CitiesService()
 messages = Responses()
 
-@city_router.post("/api/cities" , tags=["cities"])
+@city_router.post("/api/cities" , tags=["cities"], dependencies=[Depends(JWTBearer())])
 def create_city(city: schemas.CityCreate):
     try:
         city_create = crud.create_city(city)
