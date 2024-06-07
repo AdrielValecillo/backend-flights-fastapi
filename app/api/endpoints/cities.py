@@ -9,6 +9,20 @@ city_router = APIRouter()
 crud = CitiesService()
 messages = Responses()
 
+
+
+
+@city_router.get("/api/cities" , tags=["cities"], dependencies=[Depends(JWTBearer())])
+def get_cities(search: Optional[str] = None):
+    try:
+        cities = crud.get_cities(search)
+        return messages.response_message(cities, "Cities retrieved successfully", 200)
+    except HTTPException as e:
+        return messages.message_HTTPException(e)
+    except Exception as e:
+        return messages.message_exception(e)
+
+"""
 @city_router.post("/api/cities" , tags=["cities"], dependencies=[Depends(JWTBearer())])
 def create_city(city: schemas.CityCreate):
     try:
@@ -31,15 +45,6 @@ def get_city(city_id: int):
         return messages.message_exception(e)
 
 
-@city_router.get("/api/cities" , tags=["cities"])
-def get_cities(search: Optional[str] = None):
-    try:
-        cities = crud.get_cities(search)
-        return messages.response_message(cities, "Cities retrieved successfully", 200)
-    except HTTPException as e:
-        return messages.message_HTTPException(e)
-    except Exception as e:
-        return messages.message_exception(e)
 
 
 @city_router.put("/api/cities/{city_id}" , tags=["cities"])
@@ -62,3 +67,5 @@ def delete_city(city_id: int):
         return messages.message_HTTPException(e)
     except Exception as e:
         return messages.message_exception(e)
+        
+"""

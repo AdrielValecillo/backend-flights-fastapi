@@ -1,7 +1,8 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
 import app.api.schemas.schemas_reservations as schemas
 from app.services.reservations_services import ReservationService
 from app.api.responses.responses import Responses
+from app.api.endpoints.login import JWTBearer
 
 crud = ReservationService()
 reservation_router = APIRouter()
@@ -63,7 +64,7 @@ def update_reservation(reservation_id: int, new_seats: int):
         return messages.message_exception(e)
     
     
-@reservation_router.delete("/api/reservarions/{reservation_id}" , tags=["reservations"])
+@reservation_router.delete("/api/reservarions/{reservation_id}" , tags=["reservations"], dependencies=[Depends(JWTBearer())])
 def delete_reservation(reservation_id: int):
     try:
         crud.delete_reservation( reservation_id)

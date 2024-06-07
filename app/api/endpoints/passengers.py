@@ -1,8 +1,9 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
 from typing import Optional
 import app.api.schemas.schemas_passengers as schemas
 from app.services.passengers_services import PassengersService
 from app.api.responses.responses import Responses
+from app.api.endpoints.login import JWTBearer
 
 passenger_router = APIRouter()
 crud = PassengersService()
@@ -19,7 +20,7 @@ def create_passenger(passenger: schemas.PassengerCreate):
         return messages.message_exception(e)
 
 
-@passenger_router.get("/api/passengers/{passenger_id}" , tags=["passengers"])
+@passenger_router.get("/api/passengers/{passenger_id}" , tags=["passengers"], dependencies=[Depends(JWTBearer())])
 def get_passenger(passenger_id: int):
     try:
         passenger = crud.get_passenger(passenger_id)
@@ -30,7 +31,7 @@ def get_passenger(passenger_id: int):
         return messages.message_exception(e)
 
 
-@passenger_router.get("/api/passengers" , tags=["passengers"])
+@passenger_router.get("/api/passengers" , tags=["passengers"], dependencies=[Depends(JWTBearer())])
 def get_passengers(search: Optional[str] = None):
     try:
         passengers = crud.get_passengers(search)
@@ -52,7 +53,7 @@ def update_passenger(passenger_id: int, passenger: schemas.PassengerCreate):
         return messages.message_exception(e)
 
 
-@passenger_router.delete("/api/passengers/{passenger_id}" , tags=["passengers"])
+@passenger_router.delete("/api/passengers/{passenger_id}" , tags=["passengers"], dependencies=[Depends(JWTBearer())])
 def delete_passenger(passenger_id: int):
     try:
         passenger = crud.delete_passenger(passenger_id)
@@ -61,7 +62,9 @@ def delete_passenger(passenger_id: int):
         return messages.message_HTTPException(e)
     except Exception as e:
         return messages.message_exception(e)
-
+    
+    
+"""
 @passenger_router.get("/api/passengers/email/{email}" , tags=["passengers"])
 def get_passenger_email(email: str):
     try:
@@ -71,3 +74,4 @@ def get_passenger_email(email: str):
         return messages.message_HTTPException(e)
     except Exception as e:
         return messages.message_exception(e)
+"""
