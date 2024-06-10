@@ -15,6 +15,15 @@ class City(Base):
     origin_flights = relationship("Flight", back_populates="origin_city", foreign_keys="Flight.origin_id")
     destination_flights = relationship("Flight", back_populates="destination_city", foreign_keys="Flight.destination_id")
 
+class Airline(Base):
+    __tablename__ = 'airlines'
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, index=True, unique=True)
+    logo_path = Column(String)
+    
+    # Define the relationships
+    flights = relationship("Flight", back_populates="airline")
 
 
 
@@ -27,12 +36,14 @@ class Flight(Base):
     departure_date = Column(TIMESTAMP)
     capacity = Column(Integer)
     available_seats = Column(Integer)
+    airline_id = Column(Integer, ForeignKey('airlines.id'))
     is_active = Column(Boolean, default=True)
     
     # Define the relationships
     origin_city = relationship("City", back_populates="origin_flights", foreign_keys=[origin_id])
     destination_city = relationship("City", back_populates="destination_flights", foreign_keys=[destination_id])
     reservations = relationship("Reservation", back_populates="flight")
+    airline = relationship("Airline", back_populates="flights")
 
 
 

@@ -7,6 +7,7 @@ class FlightBase(BaseModel):
     destination_id: conint(gt=0)
     departure_date: date
     capacity: conint(gt=0)
+    airline_id: conint(gt=0)
 
 
 class FlightCreate(FlightBase):
