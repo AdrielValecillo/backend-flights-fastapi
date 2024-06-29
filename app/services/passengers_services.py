@@ -29,16 +29,13 @@ class PassengersService(Base):
     def get_passengers(self, search: Optional[str] = None):
         if search is not None:
             passengers = self.db.query(Passenger).filter(
-                or_(Passenger.name.like(f"%{search}%"), 
+                or_(Passenger.name.ilike(f"%{search}%"), 
                     Passenger.email == search, 
-                    Passenger.last_name.like(f"%{search}%")
+                    Passenger.last_name.ilike(f"%{search}%")
                 )
             ).all()
         else:
             passengers = self.db.query(Passenger).all()
-
-        if len(passengers) == 0:
-            raise HTTPException(status_code=404, detail="No passengers found")
         return passengers
 
 

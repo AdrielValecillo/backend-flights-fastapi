@@ -105,7 +105,7 @@ class ReservationService(Base):
         db_reservation = self.db.query(Reservation).filter(Reservation.id == reservation_id).first()
         if db_reservation is None:
             raise HTTPException(status_code=404, detail="Reservation not found")
-        if db_reservation.status == False:
+        if db_reservation.is_active == False:
             raise HTTPException(status_code=400, detail="Reservation already cancelled")
         
         db_flight = get_flight( db_reservation.flight_id)

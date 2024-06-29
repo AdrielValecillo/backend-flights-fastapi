@@ -28,7 +28,7 @@ class CitiesService(Base):
     def get_cities(self, search: Optional[str] = None):
         if search is not None:
             db_cities = self.db.query(City).filter(
-                or_(City.name.like(f"%{search}%"), City.country.like(f"%{search}%"))
+                or_(City.name.ilike(f"%{search}%"), City.country.ilike(f"%{search}%"))
             ).all()
         else:
             db_cities = self.db.query(City).all()

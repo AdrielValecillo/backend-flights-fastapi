@@ -44,3 +44,17 @@ project_name/
 ├── requirements.txt            # Archivo para listar las dependencias del proyecto
 ├── README.md                   # Documentación del proyecto
 └── .gitignore                  # Archivo para especificar los archivos y directorios a ignorar en Git
+
+
+
+
+
+
+1 - filtro búsqueda pasajero: por nombre , correo , etc 
+2- nombre métodos de respuesta
+3- herencia de Base en servicios
+4- autenticación Admin (pasajeros sin loggin, listaar vuelos , crear reservas , cancelar reservas , crear pasajero) el admin puede hacer todo lo demás
+5- status a boleano "active"
+6- cuando un pasajero cree una reserva , el sistema debe enviar un correo electrónico (detalles de reserva "detalles completos")
+7- agregar aerolínea a flights (inclui foto de logo "subida de archivos al servidor")
+https://mailtrap.io/inboxes/2918973/messages 
