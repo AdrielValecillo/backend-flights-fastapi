@@ -38,3 +38,9 @@ class UserService(Base):
             return user
         user.is_admin = True
         return user
+
+    def get_user_by_email(self, email: str) -> User:
+        user = self.db.query(User).filter(User.email == email).first()
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
+        return user
