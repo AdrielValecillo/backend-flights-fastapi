@@ -22,7 +22,7 @@ def get_cities(search: Optional[str] = None):
     except Exception as e:
         return messages.message_exception(e)
 
-"""
+
 @city_router.post("/api/cities" , tags=["cities"], dependencies=[Depends(JWTBearer())])
 def create_city(city: schemas.CityCreate):
     try:
@@ -33,7 +33,7 @@ def create_city(city: schemas.CityCreate):
     except Exception as e:
         return messages.message_exception(e)
 
-
+"""
 @city_router.get("/api/cities/{city_id}" , tags=["cities"])
 def get_city(city_id: int):
     try:
