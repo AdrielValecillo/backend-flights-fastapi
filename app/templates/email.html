@@ -22,8 +22,6 @@
                 <p class="card-text"><strong>Origen:</strong> {{ reservation.flight.origin_city.name }}, {{ reservation.flight.origin_city.country }}</p>
                 <p class="card-text"><strong>Destino:</strong> {{ reservation.flight.destination_city.name }}, {{ reservation.flight.destination_city.country }}</p>
                 <p class="card-text"><strong>Fecha de Salida:</strong> {{ reservation.flight.departure_date }}</p>
-                <p class="card-text"><strong>Capacidad del Vuelo:</strong> {{ reservation.flight.capacity }}</p>
-                <p class="card-text"><strong>Asientos Disponibles:</strong> {{ reservation.flight.available_seats }}</p>
 
                 <h5 class="card-title mt-4">Detalles de la Reserva</h5>
                 <p class="card-text"><strong>Fecha de Creación:</strong> {{ reservation.created_at }}</p>

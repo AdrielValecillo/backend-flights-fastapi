@@ -1,12 +1,21 @@
 import smtplib
 from email.message import EmailMessage
+import os
+from dotenv import load_dotenv
+
+load_dotenv("./.env")
+
+
+
+
+
 
 class EmailSender:
     def __init__(self):
-        self.smtp_server = "sandbox.smtp.mailtrap.io"
-        self.smtp_port = 2525
-        self.smtp_user = "10c60c5b4898bb"
-        self.smtp_password = "ad9d381b4d9f26"
+        self.smtp_server = os.getenv("SMTP_SERVER")
+        self.smtp_port = os.getenv("SMTP_PORT")
+        self.smtp_user = os.getenv("SMTP_USER")
+        self.smtp_password = os.getenv("SMTP_PASSWORD")
 
     def send_email(self, sender_email, receiver_email, subject, html_content):
         message = EmailMessage()
@@ -19,6 +28,5 @@ class EmailSender:
             server.starttls()
             server.login(self.smtp_user, self.smtp_password)
             server.send_message(message)
-
 
 
