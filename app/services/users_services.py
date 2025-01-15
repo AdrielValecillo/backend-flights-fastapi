@@ -10,6 +10,9 @@ import app.api.schemas.schemas_users as schemas
 class UserService(Base):
     
     def create_user(self, user: schemas.UserCreate) -> User:
+        user_exist = self.get_user_by_email(user.email)
+        if user_exist:
+            raise HTTPException(status_code=403, detail="User already exists")
         hashed_password = bcrypt.hashpw(user.password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
         user = User(name=user.name ,email=user.email, password=hashed_password)
         self.db.add(user)
