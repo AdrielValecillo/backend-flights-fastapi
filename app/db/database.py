@@ -17,6 +17,7 @@ db_name = os.getenv('DB_NAME')
 # Create the connection string
 db_url = f'postgresql://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}'
 
+
 # Create the engine
 engine = create_engine(db_url)
 

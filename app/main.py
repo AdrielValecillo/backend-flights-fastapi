@@ -8,15 +8,24 @@ from app.api.endpoints.cities import city_router
 from app.api.endpoints.login import Login_router
 from app.api.endpoints.airlines import airline_router
 from app.api.endpoints.users import user_router
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"]
+)
 
 db_models.Base.metadata.create_all(bind=engine)
 
 
 @app.get("/")
 async def root():
-    return {"message": "Hello World"}
+    return {"message": "Hello World FastAPI with Postgres By ISAI"}
 
 app.include_router(city_router)
 app.include_router(flight_router)
