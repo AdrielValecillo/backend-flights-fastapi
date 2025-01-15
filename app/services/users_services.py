@@ -3,6 +3,8 @@ from app.services.base import Base
 from app.db.models import User
 from fastapi import HTTPException
 import app.api.schemas.schemas_users as schemas
+from sqlalchemy.exc import SQLAlchemyError
+
 
 
 
@@ -10,15 +12,19 @@ import app.api.schemas.schemas_users as schemas
 class UserService(Base):
     
     def create_user(self, user: schemas.UserCreate) -> User:
-        user_exist = self.get_user_by_email(user.email)
-        if user_exist:
-            raise HTTPException(status_code=403, detail="User already exists")
-        hashed_password = bcrypt.hashpw(user.password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
-        user = User(name=user.name ,email=user.email, password=hashed_password)
-        self.db.add(user)
-        self.db.commit()
-        self.db.refresh(user)
-        return user
+        try:
+            user_exist = self.get_user_by_email(user.email)
+            if user_exist:
+                raise HTTPException(status_code=403, detail="User already exists")
+            hashed_password = bcrypt.hashpw(user.password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+            user = User(name=user.name ,email=user.email, password=hashed_password)
+            self.db.add(user)
+            self.db.commit()
+            self.db.refresh(user)
+            return user
+        except SQLAlchemyError as e:
+            self.db.rollback()
+            raise HTTPException(status_code=500, detail="Internal server error")
     
     def get_users(self) -> list[User]:
         users = self.db.query(User).all()
